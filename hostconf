@@ -1,30 +1,47 @@
 server {
-        listen 80;
-        server_name example.com www.example.com;
-        root /var/www/www.example.com/web;
-
+       listen 80;
+       server_name www.example.com;
+       rewrite ^ $scheme://example.com$request_uri permanent;
+       }
+       
+server  {
+       #listen 80;
+       
+       server_name example.com;      
+       root /var/www/www.example.com/web;
+       
+       
        access_log   /var/log/nginx/www.example.com.access.log;
-       error_log    /var/log/nginx/www.example.com.error.log;
-
-
+	   error_log    /var/log/nginx/www.example.com.error.log;
+                      
+       
        index index.php index.html;
-
-        location / {
+       location = /favicon.ico {
+                log_not_found off;
+                access_log off;
+       }
+       location = /robots.txt {
+                allow all;
+                log_not_found off;
+                access_log off;
+       }
+           location ~ /\. {
+                deny all;
+                access_log off;
+                log_not_found off;
+       }
+       location / {
                 try_files $uri $uri/ /index.php?$args;
-        }
-        
-        location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
+       }
+       
+       location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
                 expires max;
                 log_not_found off;
-        }
-
-        location ~ \.php$ {
+       }
+       location ~ \.php$ {
                 try_files $uri =404;
                 include /etc/nginx/fastcgi_params;
                 fastcgi_pass unix:/var/run/php5-fpm.sock;
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
        }
-
-
 }
-

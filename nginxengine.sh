@@ -79,8 +79,8 @@ sudo chown -R www-data:www-data /var/www
 sudo chmod -R 775 /var/www
 
 #feeding in Configuration from the template
-NEWNAME=$NAME
 TNAME=$(echo "$NAME" | sed 's/www.//')
+echo "$IP $TNAME" | sudo tee -a /etc/hosts	
 sudo cp hostconf "/etc/nginx/sites-available/$NAME" 
 sudo sed -i "s:www.example.com:$NAME:g" "/etc/nginx/sites-available/$NAME" 
 sudo sed -i "s:example.com:$TNAME:" "/etc/nginx/sites-available/$NAME"
